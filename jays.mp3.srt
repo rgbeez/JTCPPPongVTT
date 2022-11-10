@@ -1,0 +1,3596 @@
+1
+00:00:00,000 --> 00:00:02,720
+Good morning, everyone having fun at the conference so far?
+
+2
+00:00:07,000 --> 00:00:14,080
+So as Rob said, I have been doing things with 30 and 40-year-old computers for the fun of it
+
+3
+00:00:14,080 --> 00:00:16,080
+So it brings us to today's plenary
+
+4
+00:00:16,520 --> 00:00:21,120
+We are going to make a simple Commodore 64 game in C++ 17 today
+
+5
+00:00:22,080 --> 00:00:24,080
+All right, before we get started
+
+6
+00:00:24,080 --> 00:00:31,200
+Who all here regularly needs to program for desktop and server systems arm, you know
+
+7
+00:00:31,680 --> 00:00:36,360
+I'm assuming most people prop that yeah, okay, there we go
+
+8
+00:00:42,320 --> 00:00:44,320
+Powerpoint just crashed
+
+9
+00:00:44,320 --> 00:00:52,320
+That's very strange
+
+10
+00:00:54,880 --> 00:00:56,880
+All right
+
+11
+00:01:01,360 --> 00:01:07,360
+Yeah, it actually seems my computer just rebooted on me so just a moment
+
+12
+00:01:07,360 --> 00:01:12,720
+So I'm going to actually fully reboot my computer now and
+
+13
+00:01:15,200 --> 00:01:22,280
+Without the HDMI cable plugged in and we'll continue the poll so the first question was who all has to program for regular computers
+
+14
+00:01:22,280 --> 00:01:26,720
+That's every one basically right who programs for microcontrollers
+
+15
+00:01:28,320 --> 00:01:33,200
+So that's a I don't know 10% of people so
+
+16
+00:01:33,200 --> 00:01:39,760
+Does anyone here regularly have to program for 40-year-old 8-bit CPUs by any chance?
+
+17
+00:01:42,160 --> 00:01:50,480
+8 8-bit CPUs but not really what are you programming for if you are does if you are not do 16-bit math
+
+18
+00:01:53,520 --> 00:01:57,520
+16-bit emulated okay, so um today
+
+19
+00:01:59,040 --> 00:02:02,080
+While we wait for my computer to reboot we are
+
+20
+00:02:02,080 --> 00:02:10,800
+Um, we're gonna make this game in for the counter 64 and we're gonna do it in C++ 17 and we're gonna have fun while doing it
+
+21
+00:02:10,880 --> 00:02:15,760
+So the point is what we're doing here today is not going to be a hundred percent
+
+22
+00:02:16,480 --> 00:02:20,480
+Applicable because rarely do people have to program on 40-year-old computers
+
+23
+00:02:21,280 --> 00:02:22,480
+but
+
+24
+00:02:22,480 --> 00:02:29,520
+It's still gonna be fun and it'll be something that hopefully you can take away from it that you can apply to your normal daily jobs
+
+25
+00:02:29,520 --> 00:02:34,400
+My computer is almost done rebooting and
+
+26
+00:02:43,600 --> 00:02:45,600
+So
+
+27
+00:02:45,600 --> 00:02:47,440
+We did that
+
+28
+00:02:47,440 --> 00:02:53,200
+Going to implement a simple game in C++ 17. We're gonna have fun. Oh, I'm not gonna program every single line live
+
+29
+00:02:53,520 --> 00:02:58,160
+People tell me on my YouTube videos that when I don't speed up all the programming stuff
+
+30
+00:02:58,160 --> 00:03:01,520
+It gets really boring, so we're not gonna do every line live
+
+31
+00:03:03,360 --> 00:03:08,080
+So we're gonna be using matgodbolts compiler explorer is everyone familiar with gcc.godbolt.org
+
+32
+00:03:09,920 --> 00:03:11,920
+Yeah
+
+33
+00:03:12,160 --> 00:03:16,320
+So if you're not already following mat on twitter follow him right now
+
+34
+00:03:17,200 --> 00:03:21,440
+He has like 989 followers when I look to this morning. Let's just like
+
+35
+00:03:21,440 --> 00:03:26,000
+Get him over a thousand and so we can go hey the presentation must be going right now
+
+36
+00:03:28,080 --> 00:03:30,080
+We're going to be using a
+
+37
+00:03:30,320 --> 00:03:32,080
+latest version of
+
+38
+00:03:32,080 --> 00:03:35,600
+Cling from get so that we get all the C++ 17 features that we want
+
+39
+00:03:37,280 --> 00:03:40,800
+And we're gonna be using an x86 to 6502 conversion tool
+
+40
+00:03:40,880 --> 00:03:47,120
+We're not actually compiling directly for the 6502 processor and I'll fill in the details on that
+
+41
+00:03:47,120 --> 00:03:51,440
+So I I personally grew up using the Commodore 64
+
+42
+00:03:52,080 --> 00:03:58,160
+It was the second computer that my family had and I didn't really understand what it was doing
+
+43
+00:03:58,240 --> 00:04:00,080
+I just programmed in basic and
+
+44
+00:04:00,800 --> 00:04:04,240
+You did some peaks and pokes and stuff, but never really understood the architecture
+
+45
+00:04:05,360 --> 00:04:06,720
+I had decided today
+
+46
+00:04:06,800 --> 00:04:11,600
+I wanted to learn more about the Commodore, but why not use my favorite programming language while doing it
+
+47
+00:04:11,600 --> 00:04:17,360
+Of course no modern compilers officially support the 40-year-old CPU in this Commodore
+
+48
+00:04:19,440 --> 00:04:25,680
+So we're going to use our modern C++ compiler with full optimizations enabled because we want to generate the most simple code possible
+
+49
+00:04:26,080 --> 00:04:29,280
+And we're also going to be asking the compiler to output
+
+50
+00:04:29,840 --> 00:04:34,160
+32-bit 386 instructions again to keep it as simple as possible
+
+51
+00:04:35,600 --> 00:04:39,440
+And then we're going to translate this to 6502 code for the Commodore 64
+
+52
+00:04:39,440 --> 00:04:43,120
+Most people consider this to be absolutely insane
+
+53
+00:04:43,440 --> 00:04:48,000
+I actually have a comment on my YouTube video that says this is the stupidest thing I've ever seen
+
+54
+00:04:50,720 --> 00:04:52,400
+Which seems like a pretty low bar to me
+
+55
+00:04:54,640 --> 00:04:55,840
+But
+
+56
+00:04:56,800 --> 00:05:00,320
+Uh, it turns out this is actually a little bit easier than um
+
+57
+00:05:01,120 --> 00:05:03,520
+Riding a 65-bit 2 backend for LLVM
+
+58
+00:05:03,520 --> 00:05:07,760
+There's several people before me tried to do it who know more about these things than I do
+
+59
+00:05:07,760 --> 00:05:10,320
+And they were not successful so I didn't bother trying
+
+60
+00:05:11,440 --> 00:05:14,640
+And also sometimes doing the crazy thing is more fun
+
+61
+00:05:14,880 --> 00:05:16,720
+Summing it's not when you're at work
+
+62
+00:05:18,880 --> 00:05:20,880
+So this is what our translation looks like
+
+63
+00:05:22,000 --> 00:05:24,240
+If you know some assembly language
+
+64
+00:05:25,200 --> 00:05:31,120
+Cool you can probably follow this the first line is saying we're moving the value 10 into the register called AL
+
+65
+00:05:31,600 --> 00:05:34,720
+And then on this the right side is a 65-bit 2 version
+
+66
+00:05:34,720 --> 00:05:38,080
+You cannot directly load values into memory on the um
+
+67
+00:05:38,720 --> 00:05:42,640
+On the 65-bit 2 so we're saying load the accumulator with the value 10
+
+68
+00:05:42,640 --> 00:05:45,040
+Then store that into memory location three
+
+69
+00:05:45,520 --> 00:05:50,000
+I've done some mapping between next 86 registers and zero page on the Commodore
+
+70
+00:05:51,200 --> 00:05:53,760
+Um, but if you can read this cool if you can't
+
+71
+00:05:55,120 --> 00:05:59,120
+Rule of thumb less assembly is better than more
+
+72
+00:05:59,120 --> 00:06:06,080
+This is the Commodore 64 and you know um
+
+73
+00:06:06,800 --> 00:06:09,680
+If you don't if you'll just indulge me for just a moment
+
+74
+00:06:10,480 --> 00:06:15,920
+I am going to start up my VM that I realized was lost when I crashed
+
+75
+00:06:18,720 --> 00:06:21,600
+So get that booting all right
+
+76
+00:06:22,320 --> 00:06:24,320
+This is the Commodore 64
+
+77
+00:06:24,320 --> 00:06:30,000
+It was released in 1982 for $595 which is about $1,500 in today's
+
+78
+00:06:30,640 --> 00:06:31,600
+Uh
+
+79
+00:06:31,600 --> 00:06:32,880
+Economy
+
+80
+00:06:32,880 --> 00:06:38,320
+Has a 1MHz 6510 CPU so that's for the people who are going to correct me
+
+81
+00:06:38,320 --> 00:06:41,040
+It is technically a 6510 not the 6502
+
+82
+00:06:41,520 --> 00:06:45,520
+6510 adds an extra IO port that the 6502 does not have
+
+83
+00:06:46,000 --> 00:06:49,680
+But the technology is from 1975 so it's 41 years old now
+
+84
+00:06:49,680 --> 00:06:55,520
+It is uh has 64k of RAM and it's an 8-bit CPU with a 16-bit address space
+
+85
+00:06:56,080 --> 00:07:00,640
+Now comparing this to this computer that I saw on a target ad a couple months ago
+
+86
+00:07:01,520 --> 00:07:07,040
+It's the latest version of the acer aspire one netbook for $150.0.10 the price
+
+87
+00:07:07,760 --> 00:07:11,360
+It's at least 5,000 times faster
+
+88
+00:07:13,440 --> 00:07:17,680
+And that's not taking into account the much higher efficiency of the CPU
+
+89
+00:07:17,680 --> 00:07:20,560
+And and personally I love the way this worked out
+
+90
+00:07:20,560 --> 00:07:26,000
+It turns out that two gigs of RAM is exactly 32,768 times more than 64k of RAM
+
+91
+00:07:28,560 --> 00:07:30,320
+And has 64-bit CPU
+
+92
+00:07:30,320 --> 00:07:38,160
+So if you know anything about CPU caches what we're going to be creating today can easily fit in the level level one cache of the CPU
+
+93
+00:07:41,200 --> 00:07:43,760
+Uh maybe a little bit more realistic comparison
+
+94
+00:07:43,760 --> 00:07:50,480
+Is this ti msp 430 microcontroller it's $5 it's like a buck if you buy it and bulk
+
+95
+00:07:51,040 --> 00:07:53,040
+Runs at 16 megahertz
+
+96
+00:07:54,000 --> 00:07:59,760
+66k of RAM 16-bit CPU really on par with what the Commodore has for its processing
+
+97
+00:08:00,400 --> 00:08:04,640
+And I mentioned this one because it has some level of official gcc and clang support
+
+98
+00:08:04,640 --> 00:08:07,040
+But I don't really know how good that support is does anyone know
+
+99
+00:08:08,080 --> 00:08:09,280
+Anyone
+
+100
+00:08:09,280 --> 00:08:10,960
+Someone said something
+
+101
+00:08:10,960 --> 00:08:12,160
+Yeah, well
+
+102
+00:08:12,160 --> 00:08:13,440
+Um
+
+103
+00:08:13,440 --> 00:08:17,440
+All right, so I'm going to hop back over to my VM during this break
+
+104
+00:08:19,360 --> 00:08:23,200
+And to make sure I can get it set up
+
+105
+00:08:24,640 --> 00:08:26,960
+This is where I'll be demonstrating my
+
+106
+00:08:28,160 --> 00:08:29,920
+Uh compiler explorer
+
+107
+00:08:29,920 --> 00:08:42,720
+Because I needed a custom build of it
+
+108
+00:08:42,720 --> 00:08:52,720
+And
+
+109
+00:08:50,720 --> 00:08:52,720
+All right, that should be good
+
+110
+00:09:02,720 --> 00:09:04,720
+Okay
+
+111
+00:09:05,840 --> 00:09:07,840
+Oh
+
+112
+00:09:07,840 --> 00:09:14,720
+Well, all right, so this is our game we're going to be writing pong it has
+
+113
+00:09:16,000 --> 00:09:21,680
+The ball that everyone knows it's bouncing around the playing field you've got bouncy walls on the top of the bottom
+
+114
+00:09:22,160 --> 00:09:26,960
+You've got your score um in the middle and you've got paddles on either side
+
+115
+00:09:29,200 --> 00:09:32,720
+So this is my 32nd computer architecture intro
+
+116
+00:09:33,760 --> 00:09:35,760
+For people who aren't familiar
+
+117
+00:09:35,760 --> 00:09:37,760
+This is what your computer looks like
+
+118
+00:09:42,800 --> 00:09:44,800
+You have a CPU
+
+119
+00:09:45,520 --> 00:09:52,480
+Registers can be can operate at the same speed as the processor can they're the fastest way that you can work on anything
+
+120
+00:09:52,480 --> 00:09:54,480
+They're used for scratch space
+
+121
+00:09:54,720 --> 00:09:57,360
+The CPU really can't do anything on its own
+
+122
+00:09:57,360 --> 00:10:01,680
+So it has pins with which it talks to the rest of the world and I know this is an oversimplification
+
+123
+00:10:01,680 --> 00:10:07,840
+But over its bus it talks to things like RAM and other hardware peripherals
+
+124
+00:10:09,200 --> 00:10:13,840
+So in the case of say a PC and if we want to go back to the classic PC and the fun
+
+125
+00:10:14,160 --> 00:10:18,000
+architectures fundamentally unchanged your VGA card or
+
+126
+00:10:19,120 --> 00:10:24,880
+CGA card would have been plugged in on the bus and it would have been accessed as if
+
+127
+00:10:25,360 --> 00:10:29,280
+Uh, it were memory on the bus and in the case of the counter 64 this is the VIC2
+
+128
+00:10:29,280 --> 00:10:31,280
+um graphics processor
+
+129
+00:10:32,000 --> 00:10:35,440
+And the awesome thing about the Commodore is that you can actually
+
+130
+00:10:36,000 --> 00:10:42,720
+Look at the motherboard and you can see while there's the CPU and there's all the electrical traces
+
+131
+00:10:43,200 --> 00:10:47,040
+That run to the RAM and the VIC2 and it's all um
+
+132
+00:10:47,040 --> 00:10:57,120
+Uh, I mean you can literally trace it out if you want to and see that the RAM and the video processor are attached to the same exact bus that the CPU is attached to
+
+133
+00:10:59,680 --> 00:11:02,720
+So for the duration of this talk we're going to be playing an overhead game
+
+134
+00:11:04,160 --> 00:11:14,160
+I am going to put some code up or propose an idea and ask you if we can do this if it will take some overhead at runtime or no overhead at runtime
+
+135
+00:11:14,160 --> 00:11:20,880
+Just binary and someone suggested to me that I actually have you guys switch sides of the room live
+
+136
+00:11:22,080 --> 00:11:24,080
+But I don't think that'll work
+
+137
+00:11:26,240 --> 00:11:32,400
+So with memory mapped devices as I already alluded to their devices that are connected directly to CPU's address bus
+
+138
+00:11:33,120 --> 00:11:37,360
+And you read and write a specific memory locations to actually control these devices
+
+139
+00:11:37,360 --> 00:11:44,480
+So in the case of the Commodore 64 that's VIC2 if you write to location d020 the value one. This is
+
+140
+00:11:44,960 --> 00:11:51,360
+equivalent to 53 to 80 in decimal and you're telling the video controller you want to set the border color to white
+
+141
+00:11:53,280 --> 00:11:54,480
+and
+
+142
+00:11:55,600 --> 00:11:57,600
+Let's see
+
+143
+00:11:57,600 --> 00:11:59,600
+If everything is working
+
+144
+00:11:59,600 --> 00:12:07,040
+Okay, so this is the latest beta version of the compiler explorer. It's not yet live
+
+145
+00:12:07,280 --> 00:12:11,200
+But Matt helped me out a lot to get this going
+
+146
+00:12:12,400 --> 00:12:22,560
+What we have on the left is our C++ code and the middle is the x86 assembly output and on the right is the 6502 assembly output
+
+147
+00:12:23,520 --> 00:12:28,000
+And I think I'm breaking one of the main rules of giving a plenary session
+
+148
+00:12:28,000 --> 00:12:31,200
+I'm having a bunch of assembly on the screen, but I'm going with it anyhow
+
+149
+00:12:34,240 --> 00:12:40,640
+So you can see like line for line here what it's doing. We're simply setting with a reinterpret cast the the
+
+150
+00:12:41,120 --> 00:12:43,360
+memory location 5 3 2 8 0 to 1
+
+151
+00:12:44,080 --> 00:12:50,960
+And then the x86 side we're moving the value one into memory location 5 3 2 8 0 this line is
+
+152
+00:12:50,960 --> 00:12:57,760
+Resetting the eax register to 0 because that's where the return value is stored and then it's returning from main
+
+153
+00:12:58,320 --> 00:13:00,640
+Since the default return value for main is 0
+
+154
+00:13:01,520 --> 00:13:06,720
+And then over here the common reversions the same we're loading the value one into the accumulator
+
+155
+00:13:06,720 --> 00:13:09,120
+Then we're storing the accumulator to 5 3 2 8 0
+
+156
+00:13:09,600 --> 00:13:18,240
+Then we're zeroing out what I have configured to be the virtual e8 e ax register and we're returning
+
+157
+00:13:18,240 --> 00:13:24,240
+From main. Okay, so obviously if we're doing lots of memory access
+
+158
+00:13:24,960 --> 00:13:29,040
+Um with these memory map devices and we're having to um
+
+159
+00:13:30,640 --> 00:13:33,680
+Uh to do a lot of these reinterpret cast this would start to get ugly
+
+160
+00:13:34,000 --> 00:13:40,720
+So I'm gonna move this into a function and so the first question is can I move this into a function with some overhead
+
+161
+00:13:41,760 --> 00:13:43,760
+Let's say some overhead first
+
+162
+00:13:45,360 --> 00:13:47,360
+I get a handful of hands
+
+163
+00:13:47,360 --> 00:13:49,760
+Well, can I do it with no overhead?
+
+164
+00:13:51,440 --> 00:13:53,440
+That's most of everyone
+
+165
+00:14:07,840 --> 00:14:11,120
+And if again if you have not used the compiler explorer
+
+166
+00:14:12,160 --> 00:14:14,160
+This is an amazing tool
+
+167
+00:14:14,160 --> 00:14:17,600
+For being able to see the code compile live
+
+168
+00:14:22,080 --> 00:14:29,760
+So we're calling a memory 5 3 2 8 0 we're sitting that equal to 1 now this appears as though we have added some overhead
+
+169
+00:14:30,320 --> 00:14:32,320
+but what we have at the top is
+
+170
+00:14:33,600 --> 00:14:39,280
+The the function memory itself which is ending up in the final binary and
+
+171
+00:14:39,280 --> 00:14:46,080
+We also have on the 6502 site. Oh, you've done some stuff that our 6502 translator doesn't understand yet
+
+172
+00:14:48,080 --> 00:14:51,280
+But really we don't need this to end up in the final binary
+
+173
+00:14:51,840 --> 00:14:54,240
+Because it has been in line for us
+
+174
+00:14:54,240 --> 00:15:00,240
+So we're gonna put it in an anonymous namespace which is essentially making the function static
+
+175
+00:15:00,240 --> 00:15:07,600
+And then the compiler helpfully doesn't put it in the resulting binary for us. So we get a cleaner view of what we're doing
+
+176
+00:15:10,800 --> 00:15:19,040
+And this code has a problem does anyone have any idea what it is actually be great. You can yell answers at me. I'll repeat them
+
+177
+00:15:20,560 --> 00:15:22,560
+You need volatile who said that
+
+178
+00:15:23,440 --> 00:15:24,640
+Uh
+
+179
+00:15:24,880 --> 00:15:26,880
+Way in the back all the cool kids
+
+180
+00:15:27,600 --> 00:15:29,600
+all right
+
+181
+00:15:29,600 --> 00:15:31,600
+So
+
+182
+00:15:32,480 --> 00:15:37,200
+If we wanted to set the background color first to actually let's do this to white
+
+183
+00:15:37,200 --> 00:15:43,360
+Then we want to set it to black compiler out smarts us it says um you set that memory location then didn't read from it
+
+184
+00:15:43,360 --> 00:15:47,840
+Then you set it again, so I'm gonna throw away the first one and that is not what we want at all
+
+185
+00:15:49,040 --> 00:15:53,440
+So if we add volatile then we get what we want and we set the two values
+
+186
+00:15:55,040 --> 00:15:58,480
+So uh now the next thing that I'd like to
+
+187
+00:15:58,480 --> 00:16:02,240
+um toy with is putting this in a lambda function
+
+188
+00:16:02,720 --> 00:16:06,400
+So that I have a little helpful wrapper. So it's a little bit more verbose
+
+189
+00:16:06,800 --> 00:16:10,000
+Um for what I'm doing will that take some overhead
+
+190
+00:16:12,400 --> 00:16:16,320
+I get one vote for some overhead no overhead is
+
+191
+00:16:17,600 --> 00:16:19,600
+Everyone else
+
+192
+00:16:19,600 --> 00:16:29,600
+So
+
+193
+00:16:49,760 --> 00:16:56,160
+It's kind of impossible to make a mistake when you're using the uh
+
+194
+00:16:56,960 --> 00:17:00,000
+Live programming here to tell you everything you did wrong along the way
+
+195
+00:17:01,360 --> 00:17:03,360
+so
+
+196
+00:17:03,200 --> 00:17:05,200
+border
+
+197
+00:17:05,760 --> 00:17:07,760
+Of two
+
+198
+00:17:08,240 --> 00:17:12,800
+So that gets compiled away um perfectly in line. We've got no overhead
+
+199
+00:17:12,800 --> 00:17:20,000
+But ultimately for the sake of this demo what we want to do is build up um
+
+200
+00:17:21,280 --> 00:17:30,800
+An object that helps us work with our vick and uh, I guess I should have pulled before who thinks I can do this with no overhead
+
+201
+00:17:34,800 --> 00:17:41,680
+Uh, so the adding the object doesn't doesn't add anything to it at all the compiler sees that this object has no member data
+
+202
+00:17:41,680 --> 00:17:45,840
+It's trivially constructible trivially destructible. It's not doing anything
+
+203
+00:17:45,840 --> 00:17:49,760
+But it's a handy place for us to access our vick registers
+
+204
+00:17:51,600 --> 00:18:00,720
+So there you have that and also uh, we're using some constexpr and some constants and stuff and it all just goes away. It's great
+
+205
+00:18:04,480 --> 00:18:08,640
+For some reason my normal windows keyboard shortcuts haven't been working since the reboot
+
+206
+00:18:08,640 --> 00:18:16,000
+So this leads to video memory and we've discussed the border color five three two eight zero
+
+207
+00:18:16,000 --> 00:18:18,480
+We've got the background color which is five three two eight one
+
+208
+00:18:19,120 --> 00:18:22,160
+And then we have the body of the video memory and this is configurable
+
+209
+00:18:22,640 --> 00:18:25,360
+but by default it is at location 1024
+
+210
+00:18:26,400 --> 00:18:27,920
+so um
+
+211
+00:18:27,920 --> 00:18:30,000
+This is just a flat
+
+212
+00:18:30,000 --> 00:18:31,440
+linear
+
+213
+00:18:31,440 --> 00:18:33,440
+array of address
+
+214
+00:18:33,440 --> 00:18:34,960
+space to
+
+215
+00:18:34,960 --> 00:18:41,200
+Write data to the screen. So if we wanted to write to the fifth column on the third row
+
+216
+00:18:41,200 --> 00:18:43,840
+We would write to location 85
+
+217
+00:18:44,880 --> 00:18:46,880
+plus 1024
+
+218
+00:18:48,480 --> 00:18:53,120
+So we're going to need this capability for displaying um
+
+219
+00:18:53,120 --> 00:19:05,120
+uh, the scores on the screen
+
+220
+00:19:08,320 --> 00:19:09,760
+So
+
+221
+00:19:09,760 --> 00:19:14,560
+Building from our last example and now I don't have the 6502 output displayed anymore
+
+222
+00:19:14,560 --> 00:19:20,640
+But if anyone has any questions or any concerns about the 6502 is I do have it set up
+
+223
+00:19:20,640 --> 00:19:24,960
+so that I can switch back and forth between them as soon as it starts
+
+224
+00:19:26,720 --> 00:19:32,400
+Compiling well it will stick on the x86 from most of this because that's most realistic to what we're doing
+
+225
+00:19:32,400 --> 00:19:34,720
+The what you guys are going to be doing in your normal jobs
+
+226
+00:19:36,880 --> 00:19:38,480
+So
+
+227
+00:19:38,480 --> 00:19:40,480
+Again, we're doing
+
+228
+00:19:40,480 --> 00:19:42,400
+1024
+
+229
+00:19:42,400 --> 00:19:45,680
+Plus 10 which is the columns or saying column 10
+
+230
+00:19:45,680 --> 00:19:54,080
+Plus 11 times 40. It's a 40 column display. So we're writing to the 11th row 10th column the value a
+
+231
+00:19:54,560 --> 00:20:00,320
+Now this is something that I want to move into our VIC2 object with some overhead
+
+232
+00:20:02,480 --> 00:20:04,480
+I'm not getting any hands
+
+233
+00:20:04,720 --> 00:20:06,720
+no overhead
+
+234
+00:20:06,640 --> 00:20:08,240
+all right
+
+235
+00:20:08,320 --> 00:20:10,560
+So the compiler can do some really cool stuff
+
+236
+00:20:10,560 --> 00:20:16,800
+With a constant folding and other things that I don't fully understand
+
+237
+00:20:18,560 --> 00:20:25,360
+If you went to goers talk by the way yesterday and he broke down how the compiler optimizes away um
+
+238
+00:20:26,080 --> 00:20:27,600
+uh
+
+239
+00:20:27,600 --> 00:20:40,800
+Coordinates as really cool you should watch it uh if you didn't go to the top
+
+240
+00:20:58,560 --> 00:21:00,560
+Oh
+
+241
+00:21:01,200 --> 00:21:02,400
+Right
+
+242
+00:21:02,400 --> 00:21:04,720
+I actually need a VIC2 object to work with
+
+243
+00:21:09,440 --> 00:21:12,480
+So as you can see as you're all have guessed by now
+
+244
+00:21:13,440 --> 00:21:14,800
+No overhead
+
+245
+00:21:14,800 --> 00:21:16,960
+compilers able to um
+
+246
+00:21:16,960 --> 00:21:22,960
+To do all that at compile time and I'd say uh the first time I saw this personally it was moderately surprising to me
+
+247
+00:21:22,960 --> 00:21:25,760
+I didn't know that it would do that necessarily a function parameters
+
+248
+00:21:25,760 --> 00:21:30,640
+I mean obviously in the first part yes why wouldn't the compiler multiply this out for you
+
+249
+00:21:31,200 --> 00:21:33,200
+But I think that's cool
+
+250
+00:21:39,520 --> 00:21:42,960
+And I really wish I knew why my keyboard shortcuts weren't working
+
+251
+00:21:46,480 --> 00:21:48,480
+Oh
+
+252
+00:21:48,480 --> 00:21:54,880
+So uh it's a game we're going to need some colors
+
+253
+00:21:57,120 --> 00:22:03,440
+Uh the VIC2 on the Commodore 64 supports 16 colors these are approximately the colors that it supports
+
+254
+00:22:04,320 --> 00:22:12,640
+There's a fair bit of discussion analysis you can find on the internet about what exactly are the colors that the Commodore can display
+
+255
+00:22:12,640 --> 00:22:16,800
+It's um
+
+256
+00:22:18,400 --> 00:22:20,080
+So
+
+257
+00:22:20,080 --> 00:22:24,240
+We have value two is known as red it is anywhere
+
+258
+00:22:25,120 --> 00:22:28,400
+Not not nearly a pure red it's approximately 136.570
+
+259
+00:22:29,280 --> 00:22:34,880
+Then we have light red which is 184 or 10598 and these things all have
+
+260
+00:22:34,880 --> 00:22:41,520
+uh names there's medium gray and light gray and dark gray and purple and light blue and dark blue and
+
+261
+00:22:42,560 --> 00:22:46,320
+Um, but it differed between Pell and ntsc
+
+262
+00:22:47,120 --> 00:22:53,920
+And apparently there's a huge variation in the resistors that were used in the color generation hardware of the Commodore
+
+263
+00:22:54,320 --> 00:22:57,840
+So really every single Commodore produced slightly different colors
+
+264
+00:23:00,560 --> 00:23:02,320
+But what we want for our purposes
+
+265
+00:23:02,320 --> 00:23:04,320
+is
+
+266
+00:23:04,240 --> 00:23:07,680
+Is um to make working with a fixed pellet easier
+
+267
+00:23:08,480 --> 00:23:14,560
+Uh, I don't want to have to memorize or create some table that tells me that two is red or something
+
+268
+00:23:15,440 --> 00:23:22,480
+So my idea is that I want to convert from RGB to the nearest available color on the Commodore 64's pellet
+
+269
+00:23:23,760 --> 00:23:28,320
+And I'm going to do this by pretending that RGB values represent xy coordinates in 3d space
+
+270
+00:23:28,320 --> 00:23:34,480
+And I'm going to look for that point in space which is closest to our reference RGB that we are looking for
+
+271
+00:23:36,000 --> 00:23:37,520
+I want to point out
+
+272
+00:23:37,520 --> 00:23:42,080
+This is not accurate to how the human ic's colors that is a much more complicated process
+
+273
+00:23:42,160 --> 00:23:46,400
+But we're also only talking about mapping to 16 different colors. So I think it's going to be good
+
+274
+00:23:46,400 --> 00:23:48,400
+I
+
+275
+00:23:58,080 --> 00:24:02,560
+Think I know what's happened. I think yes my virtual
+
+276
+00:24:03,680 --> 00:24:10,240
+Virtual machine here actually opened on the wrong virtual desktop on windows, which is why my keyboard shortcuts aren't working
+
+277
+00:24:12,240 --> 00:24:14,240
+Oh, well
+
+278
+00:24:14,080 --> 00:24:16,080
+so
+
+279
+00:24:16,080 --> 00:24:18,080
+Who thinks that I can do this
+
+280
+00:24:18,960 --> 00:24:23,600
+Conversion to RGB values a from RGB values to
+
+281
+00:24:25,680 --> 00:24:29,040
+To the Commodore's pellet with some overhead
+
+282
+00:24:31,520 --> 00:24:35,840
+Oh, I'm getting some hands back up again who thinks I can do it with no overhead
+
+283
+00:24:37,360 --> 00:24:39,360
+The majority
+
+284
+00:24:40,400 --> 00:24:44,880
+So I have this um this code here now. I've created a struct called color
+
+285
+00:24:44,880 --> 00:24:51,040
+At this num is the index in the Commodore's pellet and we have RGB values
+
+286
+00:24:52,960 --> 00:24:56,960
+And scrolling down to the bottom. I have created an array of these colors
+
+287
+00:24:58,240 --> 00:25:01,840
+Zero through 15 and there are approximately RGB values
+
+288
+00:25:03,360 --> 00:25:08,560
+And the ultimate goal that we want is to be able to do something like border
+
+289
+00:25:08,560 --> 00:25:15,520
+Equals and I am using some templates for this
+
+290
+00:25:16,000 --> 00:25:18,000
+Vick dot
+
+291
+00:25:20,800 --> 00:25:25,200
+So we want to say get red which we saw in our example is um
+
+292
+00:25:26,480 --> 00:25:28,480
+The value to
+
+293
+00:25:31,440 --> 00:25:33,440
+Colors
+
+294
+00:25:33,440 --> 00:25:39,440
+Okay, so I haven't actually implemented nearest color yet
+
+295
+00:25:40,000 --> 00:25:44,080
+But what I have is a color comparison routine that
+
+296
+00:25:45,280 --> 00:25:48,240
+Does our um it looks for the distance
+
+297
+00:25:49,120 --> 00:25:55,600
+It sees which of the two colors is closest to the reference color
+
+298
+00:25:55,600 --> 00:26:05,840
+So it's just a less than sorting of the colors relative to the reference color that we want then we have our nearest color function
+
+299
+00:26:07,520 --> 00:26:09,520
+And what we want to do
+
+300
+00:26:10,400 --> 00:26:14,160
+Is use the min element standard algorithm
+
+301
+00:26:17,040 --> 00:26:19,040
+Over the set of colors
+
+302
+00:26:19,040 --> 00:26:21,040
+And
+
+303
+00:26:24,560 --> 00:26:27,840
+We need to use our color comparison function
+
+304
+00:26:34,720 --> 00:26:36,720
+And
+
+305
+00:26:37,760 --> 00:26:40,720
+I need to put a namespace on
+
+306
+00:26:43,440 --> 00:26:48,320
+Okay, now the problem we have remaining is that it's returning a color struct
+
+307
+00:26:48,320 --> 00:26:53,600
+So I need to actually get the index number out
+
+308
+00:26:55,520 --> 00:26:58,000
+And there we have the resulting code
+
+309
+00:27:00,800 --> 00:27:03,440
+Which looks a little bit more than
+
+310
+00:27:04,480 --> 00:27:06,480
+Some overhead
+
+311
+00:27:06,400 --> 00:27:08,400
+Everyone agrees I think
+
+312
+00:27:08,320 --> 00:27:10,320
+It's only
+
+313
+00:27:10,320 --> 00:27:12,320
+Well, I don't know
+
+314
+00:27:12,720 --> 00:27:15,280
+350 instructions plus a table of data
+
+315
+00:27:15,280 --> 00:27:21,600
+So anyone have any ideas for how we might be able to get this to use less overhead
+
+316
+00:27:24,720 --> 00:27:26,720
+Did I hear constexpr
+
+317
+00:27:27,840 --> 00:27:31,680
+Can anyone think of a simpler way to get this to have less overhead
+
+318
+00:27:39,040 --> 00:27:41,040
+What's that
+
+319
+00:27:41,040 --> 00:27:47,600
+Pre-computed table yeah, that could work, but constexpr would kind of get us there I think anyhow
+
+320
+00:27:49,680 --> 00:27:51,680
+So
+
+321
+00:27:52,400 --> 00:27:56,080
+Is there some best practice about using const anywhere possible
+
+322
+00:27:56,960 --> 00:27:58,960
+So anyone ever heard that
+
+323
+00:27:59,440 --> 00:28:03,520
+So what happens if we make our static or ray here of color data
+
+324
+00:28:03,520 --> 00:28:13,520
+Const
+
+325
+00:28:13,520 --> 00:28:32,720
+So if you don't currently use const anywhere you can I bet you will after this talk
+
+326
+00:28:35,440 --> 00:28:39,760
+This brings us to our daily programming puzzle. I wanted to go ahead and introduce it during my talk
+
+327
+00:28:39,760 --> 00:28:45,680
+We're not using constexpr which is what everyone in the audience said that I should be doing
+
+328
+00:28:46,480 --> 00:28:53,280
+What we did with const here works because the compiler happened to be able to optimize it and it's interesting
+
+329
+00:28:53,280 --> 00:28:55,280
+I'm using clang with
+
+330
+00:28:56,000 --> 00:29:00,480
+Gcc's standard library here. I'm not using a libc++
+
+331
+00:29:01,280 --> 00:29:08,000
+And that was the only combination I found where the compiler and standard library were actually able to fully optimize that away
+
+332
+00:29:08,000 --> 00:29:11,760
+With adding const to it, but you can do with const expression
+
+333
+00:29:13,760 --> 00:29:18,400
+And I have solved it otherwise I wouldn't be giving it up here as a programming puzzle for you guys
+
+334
+00:29:18,960 --> 00:29:25,600
+So the puzzle is to make the nearest color function fully constexpr enabled and in your programming puzzle
+
+335
+00:29:25,600 --> 00:29:31,600
+You're going to have some static asserts that prove that you made it constexpr enabled
+
+336
+00:29:31,600 --> 00:29:40,080
+And if you exceed there's a following puzzle excuse me to sort the pellet by luma at compile time
+
+337
+00:29:40,480 --> 00:29:44,240
+And then figure out what are the lightest and darkest colors in the pellet
+
+338
+00:29:45,120 --> 00:29:47,120
+Oh, and you have to use c++14
+
+339
+00:29:47,920 --> 00:29:58,800
+It's actually almost trivial to do this in c++17 because of the extra constexpr support that we're getting in c++17 for standard array
+
+340
+00:29:58,800 --> 00:30:02,240
+But you don't have that you guys you lost us 14
+
+341
+00:30:02,960 --> 00:30:08,800
+So we're going to help you appreciate everything that you're going to be gaining with c++17
+
+342
+00:30:12,160 --> 00:30:15,440
+So what is a game without input need a joystick
+
+343
+00:30:21,840 --> 00:30:23,760
+Commodore 64 has two joystick ports
+
+344
+00:30:23,760 --> 00:30:31,280
+And of course the joysticks are accessed via the memory map like everything else on the Commodore 64 since the
+
+345
+00:30:31,680 --> 00:30:34,160
+6502 only has its address bus
+
+346
+00:30:34,960 --> 00:30:36,160
+Talk out of
+
+347
+00:30:36,240 --> 00:30:38,480
+Hopefully the designers at Commodore
+
+348
+00:30:39,440 --> 00:30:45,280
+Made memory port b be joystick one and memory port a be joystick number two
+
+349
+00:30:48,000 --> 00:30:50,000
+Which
+
+350
+00:30:50,000 --> 00:30:52,000
+Anyone else grew up using the commodore 64
+
+351
+00:30:52,000 --> 00:31:00,720
+Wow a lot of people did you ever notice that almost every game used port two for player for the player if it was a single player game
+
+352
+00:31:01,760 --> 00:31:05,120
+You ever wonder why i think this is why because it was
+
+353
+00:31:05,840 --> 00:31:14,960
+It was the first space in memory to access. I don't know maybe not there's also some interesting interaction between the joystick port and the keyboard um scan
+
+354
+00:31:14,960 --> 00:31:21,280
+So the uh the logics inverted on our joystick data
+
+355
+00:31:21,680 --> 00:31:30,240
+So if bit zero is not set then we know that up has been pressed if bit one is not set we know is down as pressed etc
+
+356
+00:31:30,240 --> 00:31:46,240
+To fire it works the same for both joysticks
+
+357
+00:31:46,080 --> 00:31:47,600
+So i have here
+
+358
+00:31:48,160 --> 00:31:51,760
+Um added to our example we've still got our victus struct
+
+359
+00:31:52,400 --> 00:31:57,440
+We've added a couple of things we have a test bit function. This just simply returns true with a bit of set
+
+360
+00:31:57,440 --> 00:32:00,640
+It's pretty straightforward. I've actually marked that constexpr
+
+361
+00:32:02,720 --> 00:32:04,720
+And we have a joystick
+
+362
+00:32:05,360 --> 00:32:07,360
+And in our joystick um
+
+363
+00:32:08,160 --> 00:32:15,840
+We kind of have to do this inversion logic. So if the port number the um i'm doing it based off of the ports
+
+364
+00:32:15,840 --> 00:32:18,000
+How they're actually labeled on the Commodore
+
+365
+00:32:18,080 --> 00:32:25,280
+So if you're asking for port number two then i'm giving you port letter a and if you ask for not port number two
+
+366
+00:32:25,280 --> 00:32:27,280
+I give you port letter b
+
+367
+00:32:28,560 --> 00:32:34,720
+And i'm using actually a delegating constructor here which uh i thought was kind of a neat way to handle it personally
+
+368
+00:32:34,960 --> 00:32:41,760
+So on my first constructor it takes a port data all port data is as a you went eight
+
+369
+00:32:42,480 --> 00:32:48,960
+And in the second constructor i'm asking for a port number it converts uh calls the del uh calls the other constructor
+
+370
+00:32:50,240 --> 00:32:52,320
+And i set the up down left right fire
+
+371
+00:32:52,320 --> 00:33:02,160
+So this is what we have is uh and i'm using c++17s if initializer list here if you haven't seen the syntax yet
+
+372
+00:33:02,720 --> 00:33:08,240
+So the first line is uh an initialization and the second uh a second
+
+373
+00:33:08,640 --> 00:33:11,520
+Expression is what we're actually testing against
+
+374
+00:33:12,160 --> 00:33:14,160
+So i'm asking for joystick
+
+375
+00:33:15,280 --> 00:33:20,960
+port number one and if the fire button is pressed then i want to set the background color equal to one
+
+376
+00:33:20,960 --> 00:33:24,240
+And as you can see the compiler has completely um
+
+377
+00:33:25,600 --> 00:33:28,800
+It's completely done away with everything that i typed on essentially
+
+378
+00:33:30,720 --> 00:33:37,840
+Where it's simply saying is the fifth bit of the memory location five three six two one set
+
+379
+00:33:38,640 --> 00:33:40,400
+If it is
+
+380
+00:33:40,400 --> 00:33:44,880
+Then we want to jump up here move the value one and two
+
+381
+00:33:44,880 --> 00:33:52,160
+memory location five three two eight one and if not then we jump um into the loop and test again
+
+382
+00:33:54,240 --> 00:33:56,560
+So it's handled all of the delegating constructor
+
+383
+00:33:56,560 --> 00:34:01,600
+It's completely eliminated our entire data structure even though it actually does contain data now
+
+384
+00:34:03,600 --> 00:34:09,840
+Actually, it's eliminated two data structures for us because our temporary port data and our
+
+385
+00:34:09,840 --> 00:34:16,000
+uh bowls that are in here and the compiler continues to outsmart us along the way
+
+386
+00:34:16,880 --> 00:34:21,040
+If we wanted to say if up and fire are pressed at the same time
+
+387
+00:34:21,680 --> 00:34:25,760
+Now it has merged those into one operation and it's saying our bits
+
+388
+00:34:26,720 --> 00:34:28,880
+five and bit
+
+389
+00:34:28,880 --> 00:34:30,880
+zero set
+
+390
+00:34:30,880 --> 00:34:32,880
+Then it continues on
+
+391
+00:34:34,640 --> 00:34:36,640
+And you can continue
+
+392
+00:34:36,640 --> 00:34:39,360
+to add things to it
+
+393
+00:34:42,800 --> 00:34:48,880
+And it doesn't get much more complicated in that and as as everyone seen the if initializer lists anyone
+
+394
+00:34:49,600 --> 00:34:53,040
+Few some half okay, so uh
+
+395
+00:34:54,000 --> 00:35:05,520
+May as well go into that just a second with the if initializer list the value that is initialized in the if statement is available in the else block also
+
+396
+00:35:05,520 --> 00:35:07,520
+So I could say else
+
+397
+00:35:08,880 --> 00:35:09,840
+If
+
+398
+00:35:09,840 --> 00:35:13,200
+Down is pressed and the compiler continues to
+
+399
+00:35:14,000 --> 00:35:19,840
+Compile all this away. So we're using our nith initializer list or objects without any overhead
+
+400
+00:35:30,800 --> 00:35:33,440
+So everyone familiar with rai i i would hope so
+
+401
+00:35:33,440 --> 00:35:35,440
+Okay
+
+402
+00:35:37,200 --> 00:35:39,200
+Resource acquisition is initialization
+
+403
+00:35:41,360 --> 00:35:46,560
+Uh, essentially we're using constructors and destructors to manage the state and resources of our program
+
+404
+00:35:47,440 --> 00:35:49,840
+A lot of people consider this to be the greatest strength of c++
+
+405
+00:35:49,840 --> 00:35:53,200
+But I would like you to consider thinking about it differently
+
+406
+00:35:55,040 --> 00:35:58,640
+Well-defined object lifetime as c++ is greatest strength
+
+407
+00:35:58,640 --> 00:36:08,960
+C++ is not the only language with constructors and destructors, but it is one of very few languages where you know exactly when those things are going to be called
+
+408
+00:36:13,040 --> 00:36:20,640
+So who thinks that we can put some rai ii to use with some overhead
+
+409
+00:36:23,120 --> 00:36:24,640
+So
+
+410
+00:36:24,640 --> 00:36:26,640
+Two and with no overhead
+
+411
+00:36:26,640 --> 00:36:29,600
+Okay, let's see what we got
+
+412
+00:36:35,760 --> 00:36:37,760
+So what what I want to do is
+
+413
+00:36:41,920 --> 00:36:44,640
+Uh, so a little bit of a little bit of background for sorry
+
+414
+00:36:45,840 --> 00:36:50,240
+This code if you haven't noticed is is really really tight. We're talking two instructions
+
+415
+00:36:50,560 --> 00:36:53,920
+essentially right a couple of jumps so it can operate
+
+416
+00:36:53,920 --> 00:36:55,920
+Many times faster than
+
+417
+00:36:59,520 --> 00:37:05,040
+Then then the screen is updating so what we can actually see in this code is the background color
+
+418
+00:37:05,520 --> 00:37:14,000
+Changing several times per raster line as the computer is drawing the rows on the screen and you would end up with one color that's taking up
+
+419
+00:37:14,000 --> 00:37:17,040
+You know like ten pixels and then another ten another ten another ten
+
+420
+00:37:17,600 --> 00:37:19,840
+So what we need to do is put some sort of
+
+421
+00:37:19,840 --> 00:37:25,760
+Garden here to prevent us from updating but once a frame and I'm going to do that
+
+422
+00:37:28,160 --> 00:37:36,400
+By checking to see if we are on the 240th raster line and if we are we know we're outside of the normal background drawing area
+
+423
+00:37:36,400 --> 00:37:38,400
+So
+
+424
+00:37:48,720 --> 00:37:58,320
+So a simple busy loop we wait until we get to the 240th line once we have we continue on and we're willing to update the background color and
+
+425
+00:37:58,320 --> 00:38:08,320
+And that is here negative 16 is to his complement 8 bit math for 240
+
+426
+00:38:12,320 --> 00:38:16,960
+Now we just for the fun of it want to increment the border color
+
+427
+00:38:19,840 --> 00:38:21,840
+On every loop
+
+428
+00:38:21,840 --> 00:38:29,520
+Is that on every loop iteration whether or not the joystick fire button is being pressed
+
+429
+00:38:30,480 --> 00:38:32,480
+So this seems to me
+
+430
+00:38:32,480 --> 00:38:39,280
+Like a logical place to use our AI we want something that will guard us and block us until we have actually
+
+431
+00:38:39,440 --> 00:38:44,320
+Reach the 240th raster line and then we want to do something on destruction on the border
+
+432
+00:38:44,320 --> 00:38:51,200
+So I'm going to create a new function called frame on my victu
+
+433
+00:38:52,320 --> 00:38:54,320
+object
+
+434
+00:38:55,600 --> 00:38:57,760
+And in here I'm going to create an inner struct
+
+435
+00:39:00,320 --> 00:39:05,200
+That has our constructor and a destructor
+
+436
+00:39:05,200 --> 00:39:09,200
+And
+
+437
+00:39:11,040 --> 00:39:13,040
+And
+
+438
+00:39:13,040 --> 00:39:20,880
+It needs to keep a reference to its parent victu object because to operate on the border it needs to have the victu object to do that
+
+439
+00:39:20,880 --> 00:39:28,720
+And
+
+440
+00:39:28,720 --> 00:39:33,440
+Compilers now complaining at us because we have an uninitialized reference in our object no big deal
+
+441
+00:39:36,640 --> 00:39:38,640
+And then we'll use our initializer list
+
+442
+00:39:41,120 --> 00:39:43,120
+and
+
+443
+00:39:43,120 --> 00:39:45,600
+Then we return a frame object
+
+444
+00:39:45,600 --> 00:39:51,040
+That takes a reference to the parent object
+
+445
+00:39:53,600 --> 00:39:55,760
+And now we're going to move into our constructor
+
+446
+00:40:01,440 --> 00:40:03,440
+And destructor
+
+447
+00:40:03,440 --> 00:40:05,440
+So
+
+448
+00:40:13,120 --> 00:40:15,120
+So to make this work
+
+449
+00:40:20,960 --> 00:40:23,200
+And we get the exact same code that we started with
+
+450
+00:40:24,480 --> 00:40:30,000
+So we are effectively using our AI with some move operations
+
+451
+00:40:30,000 --> 00:40:36,080
+There's no copies of our frame object being created. It just does what we want it to do
+
+452
+00:40:38,080 --> 00:40:40,080
+That's
+
+453
+00:40:40,880 --> 00:40:42,880
+I don't know if I'm relying on a
+
+454
+00:40:44,240 --> 00:40:49,200
+Not yet guaranteed by the standard optimization for return value optimization
+
+455
+00:40:50,400 --> 00:40:52,400
+Just anyone answer that
+
+456
+00:40:52,400 --> 00:40:55,760
+But I can by enabling move constructors
+
+457
+00:40:56,160 --> 00:40:58,160
+so
+
+458
+00:40:58,160 --> 00:41:07,280
+Just for clarity by putting this destructor in here the compiler is not creating for us our move operations by putting in your own destructor
+
+459
+00:41:07,280 --> 00:41:09,280
+You've disabled them implicitly
+
+460
+00:41:09,920 --> 00:41:14,560
+So if I wanted to be fully correct follow the rule of zero here, which I highly recommend
+
+461
+00:41:15,360 --> 00:41:17,360
+Then we would need to do some
+
+462
+00:41:17,360 --> 00:41:27,680
+Move constructor defaults and stuff to make sure they're not default they're not disabled but anyhow
+
+463
+00:41:28,080 --> 00:41:34,480
+So this is what we wanted so at this point I said to myself hey maybe I've gone off the reservation
+
+464
+00:41:34,560 --> 00:41:42,880
+I need to make sure that this actually still doesn't have any overhead compared to writing all of this code by hand and
+
+465
+00:41:42,880 --> 00:41:47,920
+Do we want to take any guesses as to whether or not this will look the same
+
+466
+00:41:49,040 --> 00:41:52,640
+Let's see do we at this point have no overhead still
+
+467
+00:41:55,040 --> 00:41:57,520
+Hmm most people say we still have no overhead
+
+468
+00:42:03,120 --> 00:42:12,080
+So I have my r a i i sanity check where it is just a bunch of reinterpret casts and calls to memory locations
+
+469
+00:42:12,080 --> 00:42:17,600
+For the joystick port and the incrementing of the background and border color
+
+470
+00:42:20,160 --> 00:42:21,920
+So
+
+471
+00:42:21,920 --> 00:42:23,920
+This looks different
+
+472
+00:42:27,520 --> 00:42:29,520
+And does anyone know why
+
+473
+00:42:31,840 --> 00:42:38,960
+Yes, we still have a volatile problem and it's interesting that it was like two weeks into preparing this talk that I realized technically
+
+474
+00:42:38,960 --> 00:42:44,320
+I was doing my reinterpret casts wrong this entire time the compiler
+
+475
+00:42:45,280 --> 00:42:49,600
+checks the memory location five three two six six exactly once
+
+476
+00:42:50,800 --> 00:42:55,520
+And if it is not equal to 240 it
+
+477
+00:42:57,040 --> 00:43:00,480
+jumps down to this infinite busy loop
+
+478
+00:43:00,480 --> 00:43:07,360
+So we need to add volatile
+
+479
+00:43:09,280 --> 00:43:13,680
+Here we can add it and now we have proven to ourselves
+
+480
+00:43:14,560 --> 00:43:16,560
+We still have no overhead
+
+481
+00:43:16,560 --> 00:43:18,560
+Oh
+
+482
+00:43:28,320 --> 00:43:30,320
+There we go
+
+483
+00:43:31,280 --> 00:43:33,680
+Game needs sprites everyone familiar with the sprite is
+
+484
+00:43:35,360 --> 00:43:39,200
+Little movable object on the screen basically let's call it that
+
+485
+00:43:39,200 --> 00:43:47,200
+Conor 64 or the victu supports eight hardware sprites these hardware sprites have hardware sprite collision detection
+
+486
+00:43:47,200 --> 00:43:50,160
+Which is a pixel level I believe which is pretty cool
+
+487
+00:43:50,160 --> 00:43:54,960
+So if two things hit each other then you get the hard work and notify you that you've had a collision
+
+488
+00:43:56,720 --> 00:44:01,600
+And the sprites are 24 by 21 pixels each so
+
+489
+00:44:01,600 --> 00:44:16,480
+I'm going to point out that technically it has eight hardware sprites per scan line people will do lots of tricks of updating the sprites as the display is being drawn
+
+490
+00:44:16,880 --> 00:44:19,920
+Because as I already pointed out we can actually do things in the middle of the frame easily
+
+491
+00:44:20,320 --> 00:44:26,480
+So if you ever play a game on an old computer and it has more than whatever technically says it can support for sprites
+
+492
+00:44:26,480 --> 00:44:31,600
+It's because they're updating the locations during the middle of the screen draw
+
+493
+00:44:32,240 --> 00:44:36,880
+Sprites can be single color or multi color and they can have their height or width doubled
+
+494
+00:44:36,880 --> 00:44:40,000
+And that's something we'll be taking advantage of but I'm not going to go into a lot of details
+
+495
+00:44:43,760 --> 00:44:47,920
+Monochrome sprites each bit represents one pixel we have a smiley face
+
+496
+00:44:49,440 --> 00:44:52,880
+If we take a stripe out of the middle of where the eyes are
+
+497
+00:44:52,880 --> 00:44:57,200
+And assign bit patterns to this is this is literally a bit map
+
+498
+00:44:59,200 --> 00:45:06,320
+And convert that to decimal we have the values that we need to write to memory to create our sprite for the Commodore 64
+
+499
+00:45:07,040 --> 00:45:09,920
+So if we do this for the entire thing this is what we end up with
+
+500
+00:45:09,920 --> 00:45:15,440
+This is the array of data on the right that we need to write in now what I wanted to do
+
+501
+00:45:16,480 --> 00:45:22,080
+Is have the Commodore or excuse me have the compiler actually compile my sprite data for me
+
+502
+00:45:22,080 --> 00:45:34,640
+So I've written this
+
+503
+00:45:36,480 --> 00:45:38,480
+This is our bouncy ball
+
+504
+00:45:38,640 --> 00:45:40,640
+um
+
+505
+00:45:40,640 --> 00:45:43,520
+It is the bitmap in the source code
+
+506
+00:45:43,520 --> 00:45:51,680
+And I am passing this to our make sprite function the make sprite function is a variadic template
+
+507
+00:45:53,920 --> 00:45:58,800
+That is writing all of the pixel data to this specific location we wanted to go to
+
+508
+00:45:59,360 --> 00:46:05,760
+And then this is our right pixel implementation that I need to actually right now
+
+509
+00:46:07,280 --> 00:46:09,280
+So at memory location
+
+510
+00:46:09,280 --> 00:46:13,040
+Locke we want to assign the value
+
+511
+00:46:19,280 --> 00:46:21,280
+And you guys get to watch me type for a minute
+
+512
+00:46:21,280 --> 00:46:44,880
+Every time I practice the test I get confused at d4 equals d4 shifted left four times because I can't remember which number is going up and which number is going down
+
+513
+00:46:51,520 --> 00:46:53,520
+Okay
+
+514
+00:46:59,520 --> 00:47:07,760
+We are writing the very first byte of our sprite data to the specific memory location we wanted to go to which is 12288
+
+515
+00:47:09,040 --> 00:47:17,840
+And that's a detail of the default configuration of where the sprite data stored on the Commodore not worth going into but we're sticking with the defaults for the stuff
+
+516
+00:47:17,840 --> 00:47:24,960
+Now we need to actually write the rest of the sprite data and to do that we're going to call right pixel
+
+517
+00:47:26,320 --> 00:47:28,320
+recursively for the next
+
+518
+00:47:30,000 --> 00:47:33,360
+Memory location and the rest of the sprite data
+
+519
+00:47:35,600 --> 00:47:37,600
+big compiler
+
+520
+00:47:37,600 --> 00:47:39,600
+Anyone know why
+
+521
+00:47:39,600 --> 00:47:45,280
+Well I'm missing the 0th case
+
+522
+00:47:50,160 --> 00:47:52,160
+So once we run out of data
+
+523
+00:47:54,240 --> 00:47:57,520
+As expecting to call a function that has no
+
+524
+00:47:59,520 --> 00:48:01,520
+Ah there we go
+
+525
+00:48:01,520 --> 00:48:03,520
+So this takes
+
+526
+00:48:04,320 --> 00:48:06,320
+A second to compile
+
+527
+00:48:06,320 --> 00:48:09,520
+There we have it
+
+528
+00:48:10,400 --> 00:48:14,400
+We have had the compiler compile for us our
+
+529
+00:48:15,120 --> 00:48:16,720
+sprite
+
+530
+00:48:16,720 --> 00:48:18,720
+resources
+
+531
+00:48:18,720 --> 00:48:24,720
+And it is writing into memory all the specific data we want and I know there are many different ways to do this
+
+532
+00:48:24,800 --> 00:48:31,120
+In fact, it would be possible to have it create a table and then do a loop that moves the data into the
+
+533
+00:48:31,120 --> 00:48:36,400
+appropriate memory space but that's not what I wanted to do for this example
+
+534
+00:48:36,160 --> 00:48:38,720
+So we're actually asking the compiler to do a lot of work
+
+535
+00:48:41,040 --> 00:48:43,040
+And is anyone
+
+536
+00:48:44,080 --> 00:48:46,720
+Sorry about the switching back and forth
+
+537
+00:48:53,120 --> 00:48:55,120
+Should be able to get that
+
+538
+00:48:55,120 --> 00:49:01,040
+Anyone aware of how many functions parameters and how many function calls we just made
+
+539
+00:49:01,920 --> 00:49:03,920
+So you want to throw any guesses out
+
+540
+00:49:04,640 --> 00:49:07,600
+It's a big room to do this with but I'm going to do it anyhow
+
+541
+00:49:08,400 --> 00:49:10,400
+I'll give you a hint
+
+542
+00:49:10,640 --> 00:49:13,440
+Remember that that was 24 by 21 pixels
+
+543
+00:49:17,920 --> 00:49:19,920
+What's that
+
+544
+00:49:19,920 --> 00:49:24,080
+To 20 no more than that
+
+545
+00:49:26,560 --> 00:49:31,200
+504 plus one because you're forgetting the memory location
+
+546
+00:49:32,400 --> 00:49:38,960
+504 parameters being passed to the first function and how many recursive function calls are we making
+
+547
+00:49:41,520 --> 00:49:43,280
+63
+
+548
+00:49:43,280 --> 00:49:45,280
+Plus one because of the zero case
+
+549
+00:49:45,280 --> 00:49:53,760
+So we just asked the compiler at compile time to optimize away
+
+550
+00:49:54,400 --> 00:49:59,120
+64 deep recursive function call with 505 parameters to it
+
+551
+00:49:59,600 --> 00:50:02,320
+Well, I think we should give a hand to the compiler developers
+
+552
+00:50:02,320 --> 00:50:14,640
+So multi-color sprites what's the world fun without some color
+
+553
+00:50:16,240 --> 00:50:21,840
+Now we have a color version of our smiley face if you notice the pixels are double wide now what we have is
+
+554
+00:50:23,440 --> 00:50:25,680
+Each two bits
+
+555
+00:50:25,680 --> 00:50:32,720
+Represents one color and represents two pixels. So essentially you have each pixel is double wide
+
+556
+00:50:32,720 --> 00:50:38,400
+Does that make sense if we keep moving forward these are the color values
+
+557
+00:50:39,360 --> 00:50:44,480
+For each of these and then if we split that into binary we have our
+
+558
+00:50:45,280 --> 00:50:48,000
+Three octets like we did with the monochrome
+
+559
+00:50:48,720 --> 00:50:50,720
+That gives us the values that we want
+
+560
+00:50:51,920 --> 00:50:54,640
+And we do the same process again
+
+561
+00:50:54,640 --> 00:50:58,400
+So this is our final data
+
+562
+00:51:04,800 --> 00:51:07,280
+See if I can start getting smarter about switching back and forth
+
+563
+00:51:12,960 --> 00:51:15,600
+So I've already stubborn all of our
+
+564
+00:51:17,280 --> 00:51:18,800
+Multi-color sprite stuff
+
+565
+00:51:18,800 --> 00:51:26,320
+This is the paddle that we'll be using it is long and skinny because the pixels are double wide so when this is
+
+566
+00:51:28,400 --> 00:51:32,240
+You know expanded out by the computer. It's going to be square
+
+567
+00:51:32,560 --> 00:51:34,720
+But then I'm using the hardware capabilities of
+
+568
+00:51:35,440 --> 00:51:37,360
+doubling the height of it
+
+569
+00:51:37,360 --> 00:51:43,200
+So that actually gives me square pixels because the pixels were already scaled vertically
+
+570
+00:51:43,760 --> 00:51:46,720
+Now I'm going or horizontally and now I'm going to scale them vertically
+
+571
+00:51:46,720 --> 00:51:48,320
+But we'll see that in the demo
+
+572
+00:51:50,480 --> 00:51:52,880
+So we are not compiling at the moment
+
+573
+00:51:53,760 --> 00:51:56,960
+Because we have a minor problem the
+
+574
+00:51:57,920 --> 00:52:03,120
+Multi-color pixels have less data than the monochrome pixels
+
+575
+00:52:03,600 --> 00:52:08,560
+So we need some way to choose between these two things at compile time
+
+576
+00:52:09,120 --> 00:52:14,720
+And we could do this with lots of fun like spin A things or we could do it by simply having
+
+577
+00:52:14,720 --> 00:52:17,280
+a different function call from the beginning
+
+578
+00:52:17,280 --> 00:52:19,920
+So instead of make sprite I had make color sprite
+
+579
+00:52:20,400 --> 00:52:26,000
+But instead I decided to take advantage of c++17's if constexpr
+
+580
+00:52:26,720 --> 00:52:28,720
+so I can do a
+
+581
+00:52:29,360 --> 00:52:31,760
+compile time switch with if constexpr
+
+582
+00:52:33,760 --> 00:52:40,640
+And the compiler chooses the correct version at compile time the version that doesn't need to get called to just goes way
+
+583
+00:52:41,040 --> 00:52:43,040
+Everything works great
+
+584
+00:52:43,040 --> 00:52:52,000
+So now we have full support for color or monochrome sprite data being compiled at compile time by the compiler
+
+585
+00:52:58,800 --> 00:53:00,800
+Okay, time to
+
+586
+00:53:01,600 --> 00:53:03,600
+Sorry bring this together
+
+587
+00:53:04,400 --> 00:53:06,400
+But a quick note
+
+588
+00:53:06,400 --> 00:53:10,720
+The Commodore 64 screen is 200 pixels tall and 320 pixels wide
+
+589
+00:53:10,720 --> 00:53:14,400
+The Commodore is an 8-bit CPU
+
+590
+00:53:15,440 --> 00:53:17,920
+So it can only go to 255
+
+591
+00:53:18,240 --> 00:53:21,440
+Now obviously the Commodore hardware has ways of dealing with this
+
+592
+00:53:21,520 --> 00:53:25,040
+But for the sake of this demo I wanted to stick to 8-bit math
+
+593
+00:53:25,520 --> 00:53:27,520
+So the playing field
+
+594
+00:53:27,520 --> 00:53:43,520
+I've limited it to 255 pixels wide
+
+595
+00:53:50,880 --> 00:53:56,400
+So this is our final game now we have our memory functions our
+
+596
+00:53:56,400 --> 00:53:59,520
+Color data test bit
+
+597
+00:54:00,480 --> 00:54:03,440
+We have our joystick stuff that we've been talking about and
+
+598
+00:54:04,960 --> 00:54:06,960
+A key part of the joystick that I
+
+599
+00:54:07,760 --> 00:54:11,360
+kept forgetting to mention when we were actually talking about the joystick
+
+600
+00:54:11,440 --> 00:54:16,160
+But I've created this function called direction vector and it returns
+
+601
+00:54:17,040 --> 00:54:19,120
+An xy pair for what
+
+602
+00:54:19,120 --> 00:54:27,440
+What direction the joystick is being pressed in so the first values negative one if it's left one if it's right up and down
+
+603
+00:54:28,880 --> 00:54:30,720
+So we're using a standard pair for that
+
+604
+00:54:32,480 --> 00:54:35,440
+And then I've created a couple handy functions for myself. They'll let me do
+
+605
+00:54:36,000 --> 00:54:41,440
+pairwise addition and pairwise multiplication of our pairs
+
+606
+00:54:43,920 --> 00:54:45,920
+And I've added a new function called setbit
+
+607
+00:54:45,920 --> 00:54:51,600
+This is necessary for things like setting up the registers for the sprite data
+
+608
+00:54:53,440 --> 00:54:55,840
+We have our player object it
+
+609
+00:54:57,520 --> 00:55:05,360
+Has an update position member where it is using the direction vector data from the joystick to move the
+
+610
+00:55:05,760 --> 00:55:08,560
+Paddle up or down moving it three pixels at a time
+
+611
+00:55:09,360 --> 00:55:11,360
+We've got
+
+612
+00:55:11,760 --> 00:55:13,760
+Hello, we've got a
+
+613
+00:55:13,760 --> 00:55:15,760
+The
+
+614
+00:55:15,920 --> 00:55:24,800
+Score it keeps track of its own score which we are storing for the sake of this in an ASCII so I can just write the actual character code to the screen
+
+615
+00:55:26,560 --> 00:55:28,560
+And we've got a pair of volatile
+
+616
+00:55:28,720 --> 00:55:34,080
+UN8 references that are the position of the current players paddle on the screen
+
+617
+00:55:36,400 --> 00:55:38,880
+Our VIC2 object is now fully fleshed out
+
+618
+00:55:38,880 --> 00:55:48,560
+With our border background display color comparison nearest color our frame object that we're just discussing
+
+619
+00:55:48,640 --> 00:55:50,640
+But now the frame actually
+
+620
+00:55:51,440 --> 00:55:53,840
+It has references to the two players
+
+621
+00:55:54,880 --> 00:55:59,600
+And it uses those references to get the score data displays that
+
+622
+00:56:01,760 --> 00:56:03,760
+And our
+
+623
+00:56:03,760 --> 00:56:07,440
+Sprite data
+
+624
+00:56:08,240 --> 00:56:11,920
+Then our enabled sprite now has been fully fleshed out and we have
+
+625
+00:56:12,720 --> 00:56:16,160
+This new function called sprite collisions and I am going to
+
+626
+00:56:17,200 --> 00:56:19,200
+I am returning a tuple of
+
+627
+00:56:20,160 --> 00:56:21,760
+all of the
+
+628
+00:56:21,760 --> 00:56:28,800
+Collision bits so if there's been a collision involving sprite zero then the first bit is set
+
+629
+00:56:30,160 --> 00:56:32,160
+et cetera
+
+630
+00:56:32,160 --> 00:56:34,160
+Sprite colors
+
+631
+00:56:34,080 --> 00:56:36,080
+Okay, so this brings us so at the moment
+
+632
+00:56:36,080 --> 00:56:40,800
+I have the sprite data and all the boilerplate stuff commented out because I don't want it to get in the way of
+
+633
+00:56:41,360 --> 00:56:43,360
+Are looking at the assembly
+
+634
+00:56:45,360 --> 00:56:48,880
+So this is what our game logic becomes we have the ball velocity
+
+635
+00:56:49,520 --> 00:56:52,000
+Which starts out as being x
+
+636
+00:56:52,880 --> 00:56:57,600
+1 y1 so it's moving in the up right direction
+
+637
+00:56:57,600 --> 00:57:03,920
+We have a lambda reset ball. This is called every time someone scores. We need to reset the ball back to the middle of the screen
+
+638
+00:57:04,800 --> 00:57:07,840
+We have our players when where they are set
+
+639
+00:57:08,880 --> 00:57:13,360
+What sprites they are using and where the paddle is on the screen
+
+640
+00:57:15,440 --> 00:57:19,840
+And here we are using c++ 17 destructuring capability to
+
+641
+00:57:20,640 --> 00:57:24,080
+Get out all of the sprite collision data from our sprite collision function
+
+642
+00:57:24,080 --> 00:57:27,840
+And we're just testing to see was sprite zero
+
+643
+00:57:28,320 --> 00:57:34,480
+Which is the ball and involved in a collision with sprite one or sprite two which are the two paddles
+
+644
+00:57:34,880 --> 00:57:39,840
+If it was then we want to invert the velocity x velocity of the ball
+
+645
+00:57:39,920 --> 00:57:42,080
+So if it was moving left now it's moving right
+
+646
+00:57:43,200 --> 00:57:44,960
+If it was moving right now it's moving left
+
+647
+00:57:46,880 --> 00:57:53,120
+And then we need to bounce the ball out of the collision area otherwise it has the tendency to get stuck inside the paddle and do this thing
+
+648
+00:57:53,120 --> 00:57:54,320
+It's
+
+649
+00:57:54,320 --> 00:57:56,320
+not what you want
+
+650
+00:57:56,320 --> 00:58:03,920
+And so we can see over here all of this the the sprite collision logic we had a tuple in there and we had
+
+651
+00:58:05,040 --> 00:58:10,880
+We have our destructuring and then we do our comparisons here the compiler is
+
+652
+00:58:11,840 --> 00:58:13,440
+doing lots of
+
+653
+00:58:13,440 --> 00:58:19,680
+smart things and simplifying this into a pretty simple read from the sprite collision data
+
+654
+00:58:19,680 --> 00:58:24,240
+And then a couple of comparisons to figure out where the interactions were
+
+655
+00:58:26,400 --> 00:58:29,200
+Then we update the paddle positions based on
+
+656
+00:58:30,720 --> 00:58:33,680
+What the user is pressing on the joystick
+
+657
+00:58:36,400 --> 00:58:40,720
+And now here. This is this is the end of it. We've got our
+
+658
+00:58:42,480 --> 00:58:44,640
+Ball x and ball way a ball y
+
+659
+00:58:44,640 --> 00:58:50,240
+Uh, that's current location. So if the ball has gone up to the top of the screen which is row 45
+
+660
+00:58:50,960 --> 00:58:55,680
+Then we need to bounce it back down or if it's gone to the bottom we need to bounce it back up
+
+661
+00:58:55,840 --> 00:59:01,760
+So we are using those overloads for times equals on sd pair that I
+
+662
+00:59:02,480 --> 00:59:09,040
+showed a minute ago to again invert the y velocity of the ball and this
+
+663
+00:59:09,040 --> 00:59:12,560
+Logic
+
+664
+00:59:13,440 --> 00:59:19,360
+Gets compiled down to very little also actually that
+
+665
+00:59:20,720 --> 00:59:22,720
+Well
+
+666
+00:59:23,040 --> 00:59:29,840
+And if the ball has gone all the way to the left side of the screen then player one is square player two is scored because it's gone off the left side of the playing field
+
+667
+00:59:30,160 --> 00:59:34,560
+If it's gone all the to the right side of the screen then player one is scored and we update the score
+
+668
+00:59:34,560 --> 00:59:41,120
+So the entire game compiles not including the boilerplate to 83 instructions
+
+669
+00:59:43,520 --> 00:59:45,520
+So I don't know
+
+670
+00:59:46,240 --> 00:59:53,120
+Really what this equivalent would be equivalent on a PC if you could do this, but I'm guessing somewhere in the
+
+671
+00:59:54,560 --> 00:59:57,040
+billion frames per second ballpark
+
+672
+00:59:57,920 --> 00:59:59,440
+maybe
+
+673
+00:59:59,440 --> 01:00:04,480
+I like except for the fact that we're intentionally limiting it to one update per per frame which we have to do on the
+
+674
+01:00:04,480 --> 01:00:09,840
+Commodore by the way the game is completely unplayable if we don't limit it to one update per frame
+
+675
+01:00:12,240 --> 01:00:14,240
+So if we
+
+676
+01:00:15,760 --> 01:00:17,760
+Uncomment our boilerplate
+
+677
+01:00:22,960 --> 01:00:28,160
+We will now see all of the sprite data being compiled for us at the top of the output
+
+678
+01:00:28,160 --> 01:00:35,360
+And then the rest of the program logic it's compiling two sprite resources this time so that's
+
+679
+01:00:36,400 --> 01:00:39,520
+One and a half times the amount of work that we were talking about before
+
+680
+01:00:40,880 --> 01:00:48,320
+But you can see straight forward sprite one sprite two oh I didn't mention this explicitly, but the
+
+681
+01:00:49,840 --> 01:00:52,240
+The two paddles are sharing the same sprite data
+
+682
+01:00:52,480 --> 01:00:57,120
+But the Commodore can have different colors configured for the paddles so we are giving them different colors
+
+683
+01:00:57,120 --> 01:00:59,120
+So
+
+684
+01:00:59,120 --> 01:01:07,760
+The entire game is 231 instructions on x86 and on the 6502 it's a little bit bigger
+
+685
+01:01:10,160 --> 01:01:12,160
+It's
+
+686
+01:01:12,720 --> 01:01:14,720
+That's
+
+687
+01:01:18,880 --> 01:01:23,600
+Because I am doing an imperfect translation it's somewhere in the 400 and
+
+688
+01:01:23,600 --> 01:01:25,600
+10
+
+689
+01:01:26,320 --> 01:01:28,320
+Instructions 420
+
+690
+01:01:31,360 --> 01:01:33,360
+There we go 419 instructions and
+
+691
+01:01:34,240 --> 01:01:39,360
+What this means is the entire game including sprite resources compiles to 1,000 five bytes
+
+692
+01:01:40,080 --> 01:01:41,440
+basically
+
+693
+01:01:41,600 --> 01:01:44,720
+So does anyone want to actually see the game played by the way
+
+694
+01:01:46,480 --> 01:01:48,480
+All right
+
+695
+01:01:48,720 --> 01:01:50,640
+We're going to attempt to do that with
+
+696
+01:01:50,640 --> 01:01:55,680
+My Commodore 64 that I brought to the presentation
+
+697
+01:02:01,360 --> 01:02:07,440
+Now unfortunately we did have some technical difficulties while setting up and it would seem that
+
+698
+01:02:08,160 --> 01:02:12,800
+I may have sustained a little bit of hardware damage and transit so we'll see what can happen
+
+699
+01:02:13,680 --> 01:02:18,080
+I am going to need a volunteer on stage. I know I talked to her but if he's here you can come up
+
+700
+01:02:18,080 --> 01:02:21,680
+Let's see if we can get this going
+
+701
+01:02:30,080 --> 01:02:35,600
+It is that is an official original Atari 2600 joystick now
+
+702
+01:02:36,640 --> 01:02:38,080
+It's I also grew up with them
+
+703
+01:02:38,080 --> 01:02:43,680
+This is why I actually bought these on ebay just for this because this was the joystick I played all of my Commodore games with
+
+704
+01:02:43,680 --> 01:02:52,000
+So here's hoping our video is going to work at which point I'm going to need camera on stage
+
+705
+01:03:01,440 --> 01:03:06,000
+All right minor technical difficulties, but we do have a display up here
+
+706
+01:03:06,000 --> 01:03:07,760
+So as soon as it gets up there
+
+707
+01:03:08,480 --> 01:03:11,040
+So you'll be the player on the right I set this up intentionally
+
+708
+01:03:11,040 --> 01:03:15,520
+Hopefully we can actually see the screen. I've not seen this before. No, you have not this is um
+
+709
+01:03:22,320 --> 01:03:28,800
+If anyone's curious I actually got it onto the Commodore 64 by using this thing called the SD-2 IEC
+
+710
+01:03:29,440 --> 01:03:36,080
+Which is a teeny tiny little 1541 disk drive that uses an SD card and it actually
+
+711
+01:03:36,080 --> 01:03:40,240
+Plugs into the original interface that the Commodore expected
+
+712
+01:03:41,680 --> 01:03:46,800
+It's amazing that these things like these things are still being developed people love this hardware
+
+713
+01:03:47,280 --> 01:03:52,160
+The video cable that I'm using hey we're on screen the video cable I'm using is
+
+714
+01:03:53,120 --> 01:03:56,400
+Today manufactured like it's brand new from a
+
+715
+01:03:56,400 --> 01:04:05,120
+A manufacturer in the UK who's making us video output for the Commodore 64
+
+716
+01:04:15,680 --> 01:04:20,160
+Gonna load the directory from the SD card
+
+717
+01:04:21,200 --> 01:04:24,400
+It's really hard since I can't really actually see the screen
+
+718
+01:04:24,400 --> 01:04:31,200
+Okay, and what we have is pong.2.cpp.prg
+
+719
+01:04:34,080 --> 01:04:36,080
+Little verbose, but it works
+
+720
+01:04:40,800 --> 01:04:44,800
+Now if anyone's curious the assembler in tools that I used actually um
+
+721
+01:04:46,240 --> 01:04:51,200
+Load the game into my relocation 4096. So I've loaded the game
+
+722
+01:04:51,200 --> 01:04:54,560
+But to actually get it to run I need to
+
+723
+01:04:56,160 --> 01:04:59,760
+Jump to that memory location and there we have
+
+724
+01:05:00,560 --> 01:05:02,560
+Can you see the screen herb
+
+725
+01:05:13,920 --> 01:05:18,480
+It's a little slow it needs to actually at some point speed up, but there we have that
+
+726
+01:05:18,480 --> 01:05:20,480
+I
+
+727
+01:05:20,960 --> 01:05:24,800
+I hope the theme that I went for is not completely lost on the screen here
+
+728
+01:05:30,480 --> 01:05:34,480
+So that there is no end to this game so whenever we get bored
+
+729
+01:05:34,480 --> 01:05:42,800
+Yeah, and we still have a little
+
+730
+01:05:53,840 --> 01:05:55,840
+Ah stuck in the paddle
+
+731
+01:05:55,840 --> 01:05:59,840
+Oh
+
+732
+01:06:00,720 --> 01:06:02,720
+Oh, there's actually a little
+
+733
+01:06:04,000 --> 01:06:09,120
+If anyone didn't notice I didn't put any limits on where the paddle can go so you can get a little bit of a cheater uh
+
+734
+01:06:09,680 --> 01:06:11,680
+Scroll around there
+
+735
+01:06:11,680 --> 01:06:24,640
+All right, thank you herb excuse me
+
+736
+01:06:25,680 --> 01:06:27,680
+I'm glad that worked
+
+737
+01:06:27,680 --> 01:06:29,680
+All right
+
+738
+01:06:41,360 --> 01:06:46,720
+All right, why why did what we did work um we used straightforward logic in our code this is um
+
+739
+01:06:50,880 --> 01:06:56,160
+The simpler code that you can write and see those plus the better the compiler can work with that basically
+
+740
+01:06:56,160 --> 01:07:01,600
+So we have very little branching and in some cases which I didn't dig into it maybe as much as I could have
+
+741
+01:07:02,560 --> 01:07:05,600
+We actually had branching that the compiler got rid of
+
+742
+01:07:06,160 --> 01:07:12,720
+We had branching saying is if if these states are true on the joystick and the compiler said no no no
+
+743
+01:07:12,800 --> 01:07:14,080
+I don't need to do any branching here
+
+744
+01:07:14,080 --> 01:07:19,120
+I'm going to take these values and do a couple of bit shifts and I'm going to load them into some other registers and then just
+
+745
+01:07:20,160 --> 01:07:22,480
+Do the right thing and and it can do that
+
+746
+01:07:22,480 --> 01:07:29,040
+So we let the compiler work for us. We've got function inlining was huge if you didn't notice
+
+747
+01:07:29,920 --> 01:07:32,880
+There were no function calls even though we had lots of function calls
+
+748
+01:07:34,400 --> 01:07:39,680
+So anyone paying enough attention to notice how much ram we actually used if you don't include the sprite data
+
+749
+01:07:42,240 --> 01:07:47,840
+Yeah, zero bytes of ram it uh the compiler actually
+
+750
+01:07:47,840 --> 01:07:53,760
+Was able to map every single variable every single thing we did directly to register allocation
+
+751
+01:07:54,240 --> 01:07:56,400
+And this is on a 386
+
+752
+01:07:56,400 --> 01:08:00,640
+386 compiler output that I'm asking for which is um
+
+753
+01:08:01,440 --> 01:08:02,640
+I don't know
+
+754
+01:08:02,640 --> 01:08:05,040
+I don't remember it has like 16 registers or something
+
+755
+01:08:05,760 --> 01:08:07,760
+Compared to a current
+
+756
+01:08:07,840 --> 01:08:11,920
+Intel architecture does anyone know how many registers a current intel has
+
+757
+01:08:13,600 --> 01:08:15,360
+Anyone
+
+758
+01:08:15,360 --> 01:08:18,960
+I I don't actually I haven't managed to count that hot yet
+
+759
+01:08:19,440 --> 01:08:24,720
+It's in the like hundreds or something and it doesn't even matter because if you're writing to registers
+
+760
+01:08:24,800 --> 01:08:27,280
+And you can talk to hardware people that know more about this than I do
+
+761
+01:08:27,840 --> 01:08:33,600
+The CPU is going to assign those to virtual registers internally and rearrange everything for you anyhow
+
+762
+01:08:33,680 --> 01:08:35,680
+So if you keep everything simple
+
+763
+01:08:36,560 --> 01:08:39,200
+You pretty much don't need to access ram in some cases
+
+764
+01:08:40,240 --> 01:08:44,960
+And we've heard some mention of the conference already the principle of zero head abstractions zero overhead extract
+
+765
+01:08:44,960 --> 01:08:47,440
+abstractions and c++
+
+766
+01:08:48,000 --> 01:08:51,120
+So today we used objects with
+
+767
+01:08:52,160 --> 01:08:54,160
+How much overhead
+
+768
+01:08:55,120 --> 01:08:57,120
+Methods zero
+
+769
+01:08:58,560 --> 01:09:01,920
+Delegating constructors and destructors zero
+
+770
+01:09:03,200 --> 01:09:05,600
+Lambdas with and without captures
+
+771
+01:09:06,560 --> 01:09:11,520
+Zero overhead structured bindings from c++ 17 with no overhead
+
+772
+01:09:11,520 --> 01:09:17,680
+Function calls no overhead c++ new 17 if and it expressions with
+
+773
+01:09:18,720 --> 01:09:20,480
+Zero overhead and
+
+774
+01:09:20,880 --> 01:09:22,720
+variatic recursive templates
+
+775
+01:09:23,600 --> 01:09:31,280
+With zero runtime overhead and even standard algorithms with zero runtime overhead
+
+776
+01:09:31,280 --> 01:09:33,280
+So
+
+777
+01:09:40,880 --> 01:09:48,880
+So that brings me to the conclusion as Rob mentioned we host cbvcast check it out and my c++ weekly youtube channel
+
+778
+01:09:48,880 --> 01:09:51,200
+Which is how I ended up on this stage
+
+779
+01:09:52,320 --> 01:09:53,200
+um
+
+780
+01:09:53,200 --> 01:09:56,960
+URL and I've done a couple of videos with a Riley if you want to check them out
+
+781
+01:09:57,360 --> 01:09:59,360
+So if there's questions
+
+782
+01:09:59,360 --> 01:10:01,360
+Ask questions
+
+783
+01:10:01,520 --> 01:10:03,520
+We've already got one. Yeah, hi
+
+784
+01:10:04,320 --> 01:10:08,960
+Even though it's not in the standard I've noticed that compiler sometimes can deduce concept or if from const
+
+785
+01:10:09,040 --> 01:10:12,560
+I was just wondering if that's what happens here array. I'm sorry if what happened to it
+
+786
+01:10:13,280 --> 01:10:17,200
+Sometimes compiler's can deduce const expert from const when you write just const
+
+787
+01:10:17,520 --> 01:10:20,720
+Can the compiler just deduce const expert from const? I would say
+
+788
+01:10:22,800 --> 01:10:27,120
+No, I don't believe that's technically what happened. I've seen that happen before. Yes
+
+789
+01:10:27,120 --> 01:10:31,840
+Uh, and and there's there are rules that say you know in certain cases
+
+790
+01:10:33,040 --> 01:10:35,760
+The constructors are implicitly const expert
+
+791
+01:10:36,560 --> 01:10:38,960
+I in some cases I forget the details
+
+792
+01:10:39,600 --> 01:10:47,600
+But I think it's um just a really a compiler being really smart there because that version of standard array from the standard library
+
+793
+01:10:47,600 --> 01:10:52,080
+I was using does not have any const expert or that's very few const expert methods on it
+
+794
+01:10:52,080 --> 01:10:56,320
+Uh, yes. Oh, hey Jason. Great talk. Thanks
+
+795
+01:10:56,640 --> 01:10:59,200
+Um, you have the recursive template
+
+796
+01:10:59,680 --> 01:11:03,360
+Formulation are you familiar with um the for each and args
+
+797
+01:11:03,920 --> 01:11:06,400
+Variety pack expansion style that Vittorio's talk
+
+798
+01:11:07,040 --> 01:11:11,600
+Yeah, you covered. I did you try that one? No, I didn't try it. I've seen some of that stuff
+
+799
+01:11:11,680 --> 01:11:19,120
+I was aiming for something that I knew I could easily that the result would easily translate into what I wanted on the 6502
+
+800
+01:11:19,680 --> 01:11:21,200
+um
+
+801
+01:11:21,200 --> 01:11:25,520
+But I also wanted to do it all without having to include any boilerplate code
+
+802
+01:11:26,240 --> 01:11:28,240
+Which I believe I would have to in that case
+
+803
+01:11:29,520 --> 01:11:34,320
+The for each one. Well, I mean my my curiosity is just with it up my's away. Oh, I don't know
+
+804
+01:11:34,400 --> 01:11:40,320
+If frequently compiles faster, I think then hold up recursive stuff. Oh, there's Vittorio
+
+805
+01:11:45,520 --> 01:11:47,600
+Okay, so he said the for each args
+
+806
+01:11:47,600 --> 01:11:52,720
+Uh after optimization level one on clang and two on gcc goes away
+
+807
+01:11:53,760 --> 01:11:55,760
+other way around
+
+808
+01:11:57,680 --> 01:12:01,360
+So yes, it can also go away with probably faster compile time
+
+809
+01:12:05,440 --> 01:12:10,960
+Awesome talk. Thank you. I was wondering if you compiled this without exception support
+
+810
+01:12:11,280 --> 01:12:13,520
+If you handle that any I didn't need the bother to try
+
+811
+01:12:13,520 --> 01:12:18,160
+So did the it just I mean, I'm not using any exceptions
+
+812
+01:12:18,320 --> 01:12:23,680
+I'm not calling any functions that could throw exceptions. There was no exception code generated. It didn't matter
+
+813
+01:12:24,640 --> 01:12:26,640
+awesome
+
+814
+01:12:28,400 --> 01:12:35,200
+Hi, thank you for showing the assembly on the screen. It was very entertaining. Um, I had the question
+
+815
+01:12:35,200 --> 01:12:40,480
+You know the tricks that you showed they work one time when you're just doing things like that
+
+816
+01:12:40,480 --> 01:12:45,840
+But in real production code you want to make sure that these things continue to be to be optimized away
+
+817
+01:12:46,400 --> 01:12:54,960
+As the code gets improved. Do you have any tricks to do static asserts or code size or anything like that to make sure that the
+
+818
+01:12:56,160 --> 01:13:02,480
+Zero overhead abstractions continue to be zero overhead. I think probably the most important thing is
+
+819
+01:13:03,360 --> 01:13:07,600
+In my experience, and I'm sure we would get a huge range of answers from the audience
+
+820
+01:13:07,600 --> 01:13:10,960
+Uh is avoiding dynamic allocations
+
+821
+01:13:11,760 --> 01:13:21,200
+By doing as much stuff as you can on the stack as pal as possible the compiler is able to do some really amazing things with what it's able to to do from the code
+
+822
+01:13:21,760 --> 01:13:26,640
+Um, and then I I would suggest actually taking advantage of constexpr
+
+823
+01:13:27,360 --> 01:13:29,360
+Um as much as possible
+
+824
+01:13:29,360 --> 01:13:37,360
+Uh, and then and then letting the compiler do its job
+
+825
+01:13:39,360 --> 01:13:42,960
+Uh, that's uh, okay another question just last one uh
+
+826
+01:13:43,920 --> 01:13:53,120
+Please in non generic code. Can we get rid of standard pair and use us abstract with named members C++ 11 14 17
+
+827
+01:13:53,120 --> 01:14:01,360
+I'll tell was tell says that that has zero overhead of a standard pair. So instead of using first and second and custom
+
+828
+01:14:02,080 --> 01:14:05,200
+Dangerous overloads on the operators for generic standard pair
+
+829
+01:14:06,000 --> 01:14:09,440
+With generic standard uh, if I understand your question correctly
+
+830
+01:14:09,440 --> 01:14:16,080
+I mean you can use destruct destructuring of the pairs and you can get away from some of the nonsense of using first and second and keep the code clean
+
+831
+01:14:16,640 --> 01:14:18,640
+Yeah, okay
+
+832
+01:14:18,640 --> 01:14:20,640
+Oh
+
+833
+01:14:21,760 --> 01:14:22,960
+Yes
+
+834
+01:14:22,960 --> 01:14:28,400
+The the amount of code that the compiler generated after the optimizations was simply stunning
+
+835
+01:14:28,960 --> 01:14:32,240
+stunningly small. Yes. So do you have any idea what a
+
+836
+01:14:32,800 --> 01:14:39,840
+hand-rolled say version of pong that was contemporary with the hardware might have consumed in memory?
+
+837
+01:14:39,840 --> 01:14:47,280
+You know, I do not know but I am assuming that after this video is released on youtube. I will find out
+
+838
+01:14:54,800 --> 01:14:56,800
+Yes
+
+839
+01:14:57,040 --> 01:15:02,400
+Don't worry. It's good. So you said you said that this consumes zero runtime memory
+
+840
+01:15:02,880 --> 01:15:06,080
+I think it's that's not accurate. I think it's better than that
+
+841
+01:15:06,080 --> 01:15:10,880
+Better than zero because you are using some runtime memory. You're storing the current color you're storing
+
+842
+01:15:10,880 --> 01:15:12,240
+That's the sprite at runtime
+
+843
+01:15:12,400 --> 01:15:17,840
+But what you're doing is you're taking advantage of the memory that the hardware is already using any way
+
+844
+01:15:18,240 --> 01:15:21,280
+And you're using it directly without adding any overhead of your own
+
+845
+01:15:21,360 --> 01:15:26,960
+So you are using memory that's already there and using it the most efficient way possible which I think is really cool
+
+846
+01:15:27,280 --> 01:15:29,280
+That's the interesting point
+
+847
+01:15:29,680 --> 01:15:31,680
+Thank you
+
+848
+01:15:31,680 --> 01:15:38,560
+Just a good question. How much work was it actually writing the conversion tool from the x86
+
+849
+01:15:39,280 --> 01:15:43,200
+To the 6502 kind of assembly compared to actually writing the game
+
+850
+01:15:45,280 --> 01:15:47,280
+Um
+
+851
+01:15:47,840 --> 01:15:50,960
+It's probably about three times more work than actually writing the game
+
+852
+01:15:51,040 --> 01:15:57,920
+But I spent a lot of time tweaking the code to try to get what I thought would be the cleanest representation of the
+
+853
+01:15:58,480 --> 01:16:00,480
+Of the game main loop
+
+854
+01:16:00,480 --> 01:16:02,480
+possible, but
+
+855
+01:16:03,440 --> 01:16:08,720
+The 6502 assembler or reassembler I called a reassembler actually got that name from my cousin
+
+856
+01:16:09,360 --> 01:16:12,960
+It's it took um, I'd say about it maybe a week's worth of work
+
+857
+01:16:13,280 --> 01:16:16,080
+But the bulk of that work was done in the
+
+858
+01:16:17,040 --> 01:16:20,960
+Before the C++ weekly YouTube video that led up to where we are today
+
+859
+01:16:21,840 --> 01:16:26,320
+And it's it's excuse me. It's up on GitHub. I didn't put a link to it in here
+
+860
+01:16:26,320 --> 01:16:32,000
+But if you look for a x86 to 6502 you can find it and it's
+
+861
+01:16:32,960 --> 01:16:38,320
+It's pretty good at this point. I would say so one of the comments on my original video
+
+862
+01:16:38,640 --> 01:16:41,760
+I said I got a comment that said this is the stupidest thing I've ever seen
+
+863
+01:16:42,240 --> 01:16:51,120
+Um, and the follow on was you it could never work for non-truvial code and I admit that this is crazy
+
+864
+01:16:51,120 --> 01:16:55,280
+But it can work for non-truvial code and it was really fun to do
+
+865
+01:16:57,920 --> 01:16:59,920
+How did you go about developing
+
+866
+01:17:00,720 --> 01:17:04,800
+This sort of example was it something you wrote all at once? Did you write it in chunks?
+
+867
+01:17:04,960 --> 01:17:09,360
+I mean the way you kind of walked us through looked very interesting, but is that the way you actually made it?
+
+868
+01:17:12,800 --> 01:17:14,800
+Have to think about that for a second
+
+869
+01:17:16,320 --> 01:17:18,320
+I
+
+870
+01:17:18,320 --> 01:17:26,720
+I knew what my goal was and that it was to put a two-player game on the screen live on the converse 64 and
+
+871
+01:17:30,000 --> 01:17:36,960
+I initially thought I was gonna have to go with something much more simple than pong even and pongs pretty darn simple
+
+872
+01:17:36,960 --> 01:17:42,640
+The original pong is as implemented in solid state hardware. There's no programming involved
+
+873
+01:17:43,600 --> 01:17:45,600
+But it's also all in black and white
+
+874
+01:17:45,600 --> 01:17:47,200
+Um
+
+875
+01:17:47,200 --> 01:17:54,480
+So I kind of I kind of proved to myself that I could make the game. I wanted to make for this demo and then I
+
+876
+01:17:55,280 --> 01:18:01,600
+Took where I had started on the YouTube video and I kind of worked towards the middle to get what I wanted
+
+877
+01:18:03,200 --> 01:18:10,000
+Oh, and how much time do you think this would take you this took you to make sort of like in terms of development?
+
+878
+01:18:10,000 --> 01:18:12,800
+Was it a week on and off or several weeks of
+
+879
+01:18:12,800 --> 01:18:19,680
+Toying around with it till you had what you wanted the entire presentation or just the game the game the game
+
+880
+01:18:22,400 --> 01:18:24,400
+Probably week and a half
+
+881
+01:18:24,480 --> 01:18:26,480
+Maybe full-time effort
+
+882
+01:18:28,880 --> 01:18:32,160
+I've noticed that you sprinkled as you said const all over the place
+
+883
+01:18:33,200 --> 01:18:38,720
+But I've noticed also a static keyword. Can you talk about static and what was the significance of?
+
+884
+01:18:38,720 --> 01:18:42,320
+Uh, dance. Oh the static keyword. So
+
+885
+01:18:45,360 --> 01:18:47,360
+Let's see
+
+886
+01:18:48,640 --> 01:18:51,140
+And the see if I can get there
+
+887
+01:18:53,520 --> 01:18:55,520
+That was and
+
+888
+01:18:56,400 --> 01:19:00,880
+This is the most basic example. Oh, but that doesn't have the the palette actually implemented yet
+
+889
+01:19:01,280 --> 01:19:03,280
+um
+
+890
+01:19:03,280 --> 01:19:11,760
+Let's see because uh, you know as as we just said this code was kind of generated and
+
+891
+01:19:12,720 --> 01:19:16,400
+Stages so it's possible the static is not necessary there
+
+892
+01:19:16,400 --> 01:19:22,400
+But I think it actually is for the compiler to optimize it oh no actually in that version. It's not static
+
+893
+01:19:23,920 --> 01:19:25,920
+so um
+
+894
+01:19:26,160 --> 01:19:29,200
+Yeah, the the compiler did the right thing const was the important part
+
+895
+01:19:29,200 --> 01:19:35,520
+static started from when I was trying to figure out the best way to organize the code to make it as readable as possible on the screen and I had moved it
+
+896
+01:19:36,080 --> 01:19:38,080
+Outside of the function
+
+897
+01:19:38,080 --> 01:19:40,080
+Okay, thanks. Oh
+
+898
+01:19:40,080 --> 01:19:42,080
+I
+
+899
+01:19:42,080 --> 01:19:46,080
+All right, yes, that's it. Thank you
+
